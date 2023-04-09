@@ -29,6 +29,7 @@
         // console.log(module);
 
         const pipeline = device.createComputePipeline({
+            layout: "auto",
             compute: {
                 module,
                 entryPoint: "main",
