@@ -49,12 +49,21 @@
             alphaMode: "opaque"
         });
 
-
-        const vertices = new Float32Array([
+        const triangle = [
             -1.0, -1.0, 0, 1, 1, 0, 0, 1,
-            -0.0, 1.0, 0, 1, 0, 1, 0, 1,
+            0.0, 1.0, 0, 1, 0, 1, 0, 1,
             1.0, -1.0, 0, 1, 0, 0, 1, 1
-        ]);
+        ];
+
+        const square = [
+            -1, 1, 0,  1, 1, 0, 1, 0,
+            1, 1, 0,   1, 1, 0, 1, 0,
+            -1, -1, 0, 1, 1, 0, 1, 0,
+            1, -1, 0,  1, 1, 0, 1, 0,
+        ];
+
+        const vertices = new Float32Array(square);
+
 
         const vertexBuffer = device.createBuffer({
             size: vertices.byteLength,
