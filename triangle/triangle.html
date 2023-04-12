@@ -12,7 +12,7 @@
         const triangleVertWGSL = await fetch('/triangle/triangle.vertex.wgsl').then(response => response.text());
         const redFragWGSL = await fetch('/triangle/triangle.fragment.wgsl').then(response => response.text());
         const canvas = document.getElementById("canvas-container");
-        
+
         const adapter = await navigator.gpu.requestAdapter();
         const device = await adapter.requestDevice();
 
@@ -26,7 +26,7 @@
         context.configure({
             device,
             format: presentationFormat,
-            alphaMode: 'premultiplied',
+            alphaMode: 'premultiplied', // premultiplied is better for interpolation
         });
 
         const pipeline = device.createRenderPipeline({
