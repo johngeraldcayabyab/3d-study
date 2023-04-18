@@ -2,15 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Triangle</title>
+    <title>Hello Triangle</title>
 </head>
 <body>
 <canvas id="canvas-container" width="500" height="500">
 </canvas>
 <script type="text/javascript">
     (async () => {
-        const triangleVertWGSL = await fetch('/triangle/triangle.vertex.wgsl').then(response => response.text());
-        const redFragWGSL = await fetch('/triangle/triangle.fragment.wgsl').then(response => response.text());
+        const triangleVertWGSL = await fetch('/web-gpu-examples/hello-triangle/triangle.vertex.wgsl').then(response => response.text());
+        const redFragWGSL = await fetch('/web-gpu-examples/hello-triangle/triangle.fragment.wgsl').then(response => response.text());
         const canvas = document.getElementById("canvas-container");
 
         const adapter = await navigator.gpu.requestAdapter();
