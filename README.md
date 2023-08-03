@@ -9,6 +9,12 @@ https://sotrh.github.io/learn-wgpu/beginner/tutorial3-pipeline/#what-s-a-pipelin
 https://carmencincotti.com/2022-12-12/how-to-render-a-webgpu-triangle-series-part-two-video/
 <br>
 https://webgpu.github.io/webgpu-samples/samples/helloTriangle
+<br>
+
+<h5>Most useful</h5>
+https://codelabs.developers.google.com/your-first-webgpu-app
+<br>
+https://webgpufundamentals.org/webgpu/lessons/
 
 
 
