@@ -21,8 +21,7 @@
 
         const device = await adapter.requestDevice();
 
-        const canvas = createCanvas();
-        const context = canvas.getContext('webgpu');
+        const context = createContext();
         const canvasFormat = navigator.gpu.getPreferredCanvasFormat();
         context.configure({
             device: device,
@@ -114,11 +113,15 @@
 
     }
 
+    function createContext(width = 512, height = 512) {
+        const canvas = createCanvas(width, height);
+        return canvas.getContext('webgpu');
+    }
 
-    function createCanvas() {
+    function createCanvas(width = 512, height = 512) {
         const canvas = document.createElement("canvas");
-        canvas.width = 512;
-        canvas.height = 512;
+        canvas.width = width;
+        canvas.height = height;
         document.body.appendChild(canvas);
         return canvas;
     }
