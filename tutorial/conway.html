@@ -74,7 +74,10 @@
                 @vertex
                 fn vertexMain(@location(0) pos: vec2f) ->
                 @builtin(position) vec4f {
-                    return vec4(pos / grid, 0, 1);
+                    let cell = vec2f(1, 1);
+
+                    let gridPos = (pos + 1) / grid -1;
+                    return vec4(gridPos, 0, 1);
                 }
 
                 @fragment
