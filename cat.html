@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Changing Cat Emotions</title>
+</head>
+<body>
+<pre id="catSprite"></pre>
+
+<script>
+    const emotions = [
+        "Confused:    \n /\\_/\\        \n( o.o )      \n > ? <        ",
+        "Excited:     \n /\\_/\\        \n( ^_^ )      \n > - <        ",
+        "Grumpy:      \n /\\_/\\        \n( >_< )      \n >   <        ",
+        "Playful:     \n /\\_/\\        \n( ^.^ )      \n > - <        ",
+        "Love:        \n /\\_/\\        \n( ♥‿♥ )      \n >   <        ",
+        "Worried:     \n /\\_/\\        \n( >_< )      \n >   <        ",
+        "Content:     \n /\\_/\\        \n( ^-^ )      \n >   <        ",
+        "Shy:         \n /\\_/\\        \n( -^- )      \n >   <        ",
+        "Mischievous: \n /\\_/\\        \n( ¬‿¬ )      \n >   <        ",
+        "Silly:       \n /\\_/\\        \n( x.x )      \n > ^ <        ",
+        "Proud:       \n /\\_/\\        \n( •ω• )      \n > - <        ",
+        "Surprised:   \n /\\_/\\        \n( O.O )      \n >   <        ",
+        // Add more emotions and sprite representations here
+    ];
+
+    function getRandomEmotion() {
+        return emotions[Math.floor(Math.random() * emotions.length)];
+    }
+
+    function updateCatSprite() {
+        const catSpriteElement = document.getElementById('catSprite');
+        const randomEmotion = getRandomEmotion();
+
+        catSpriteElement.textContent = randomEmotion;
+    }
+
+    // Change emotion every 3 seconds (3000 milliseconds)
+    setInterval(updateCatSprite, 3000); // Adjust interval as desired
+</script>
+</body>
+</html>

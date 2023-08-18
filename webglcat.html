@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Cat with WebGL</title>
+</head>
+<body>
+<canvas id="canvas" width="800" height="600"></canvas>
+
+<script>
+    const canvas = document.getElementById('canvas');
+    const gl = canvas.getContext('webgl');
+
+    // Vertex shader source code
+    const vertexShaderSource = `
+            attribute vec2 a_position;
+            attribute vec2 a_texCoord;
+
+            varying vec2 v_texCoord;
+
+            void main() {
+                gl_Position = vec4(a_position, 0, 1);
+                v_texCoord = a_texCoord;
+            }
+        `;
+
+    // Fragment shader source code
+    const fragmentShaderSource = `
+            precision mediump float;
+
+            varying vec2 v_texCoord;
+            uniform sampler2D u_texture;
+
+            void main() {
+                gl_FragColor = texture2D(u_texture, v_texCoord);
+            }
+        `;
+
+    const vertexShader = gl.createShader(gl.VERTEX_SHADER);
+    gl.shaderSource(vertexShader, vertexShaderSource);
+    gl.compileShader(vertexShader);
+
+    const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+    gl.shaderSource(fragmentShader, fragmentShaderSource);
+    gl.compileShader(fragmentShader);
+
+    const shaderProgram = gl.createProgram();
+    gl.attachShader(shaderProgram, vertexShader);
+    gl.attachShader(shaderProgram, fragmentShader);
+    gl.linkProgram(shaderProgram);
+    gl.useProgram(shaderProgram);
+
+    // Define vertices for a quad representing the cat
+    const vertices = new Float32Array([
+        -0.5, -0.5, 0.0, 0.0,
+        0.5, -0.5, 1.0, 0.0,
+        0.5,  0.5, 1.0, 1.0,
+        -0.5,  0.5, 0.0, 1.0,
+    ]);
+
+    // Create a buffer to hold vertex data
+    const vertexBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+
+    // Set up attributes and uniforms
+    const positionLocation = gl.getAttribLocation(shaderProgram, "a_position");
+    gl.enableVertexAttribArray(positionLocation);
+    gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 16, 0);
+
+    const texCoordLocation = gl.getAttribLocation(shaderProgram, "a_texCoord");
+    gl.enableVertexAttribArray(texCoordLocation);
+    gl.vertexAttribPointer(texCoordLocation, 2, gl.FLOAT, false, 16, 8);
+
+    const textureLocation = gl.getUniformLocation(shaderProgram, "u_texture");
+
+    // Load textures (you'll need to replace this with your actual texture loading code)
+    const texture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+
+    // Placeholder texture (replace with your image URL)
+    const placeholderTexture = new Uint8Array([255, 0, 0, 255]); // Red
+
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, placeholderTexture);
+
+    // Create rendering loop
+    function render() {
+        // Clear canvas
+        gl.clearColor(0.0, 0.0, 0.0, 1.0);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+
+        // Bind and activate texture
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.uniform1i(textureLocation, 0);
+
+        // Draw
+        gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
+
+        requestAnimationFrame(render);
+    }
+
+    render();
+</script>
+</body>
+</html>
