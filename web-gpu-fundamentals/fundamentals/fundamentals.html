@@ -17,9 +17,45 @@
             format: presentationFormat
         });
         const module = device.createShaderModule({
-            label: 'Hard coded triangle',
-            code: ``
-        })
+            label: 'Hard coded triangle shader',
+            code: await getWgsl('/web-gpu-fundamentals/fundamentals/triangle.wgsl')
+        });
+        const pipeline = device.createRenderPipeline({
+            label: 'our hardcoded red triangle pipeline',
+            layout: 'auto',
+            vertex: {
+                module,
+                entryPoint: 'vs',
+            },
+            fragment: {
+                module,
+                entryPoint: 'fs',
+                targets: [{format: presentationFormat}],
+            },
+        });
+        const renderPassDescriptor = {
+            label: 'Render pass descriptor',
+            colorAttachments: [
+                {
+                    view: context.getCurrentTexture().createView(),
+                    clearValue: [0.3, 0.3, 0.3, 1],
+                    loadOp: 'clear',
+                    storeOp: 'store'
+                }
+            ]
+        };
+
+        function render() {
+            const encoder = device.createCommandEncoder({label: 'Encoder'});
+            const pass = encoder.beginRenderPass(renderPassDescriptor);
+            pass.setPipeline(pipeline);
+            pass.draw(3);
+            pass.end();
+            const commandBuffer = encoder.finish();
+            device.queue.submit([commandBuffer]);
+        }
+
+        render();
     })();
 </script>
 
