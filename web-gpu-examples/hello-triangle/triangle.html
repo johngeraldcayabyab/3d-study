@@ -7,10 +7,11 @@
 <body>
 <canvas id="canvas-container" width="500" height="500">
 </canvas>
+<script src="../../main.js"></script>
 <script type="text/javascript">
     (async () => {
-        const triangleVertWGSL = await fetch('/web-gpu-examples/hello-triangle/triangle.vertex.wgsl').then(response => response.text());
-        const redFragWGSL = await fetch('/web-gpu-examples/hello-triangle/triangle.fragment.wgsl').then(response => response.text());
+        const triangleVertWGSL = await getWgsl('/web-gpu-examples/hello-triangle/triangle.vertex.wgsl');
+        const redFragWGSL = await getWgsl('/web-gpu-examples/hello-triangle/triangle.fragment.wgsl');
         const canvas = document.getElementById("canvas-container");
 
         const adapter = await navigator.gpu.requestAdapter();

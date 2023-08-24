@@ -1,3 +1,7 @@
+async function getWgsl(url) {
+    return await fetch(url).then(response => response.text());
+}
+
 async function getAdapter() {
     if (!navigator.gpu) {
         throw new Error('WebGPU not supported in this browser');

@@ -12,8 +12,8 @@
     //https://www.digitaltrends.com/computing/what-is-anti-aliasing/#:~:text=Among%20all%20of%20the%20graphics,look%20terrible%20if%20harnessed%20incorrectly.
     //https://vulkan-tutorial.com/Multisampling
     (async () => {
-        const triangleVertWGSL = await fetch('/web-gpu-examples/hello-triangle-msaa/triangle.vertex.wgsl').then(response => response.text());
-        const redFragWGSL = await fetch('/web-gpu-examples/hello-triangle-msaa/triangle.fragment.wgsl').then(response => response.text());
+        const triangleVertWGSL = await getWgsl('/web-gpu-examples/hello-triangle-msaa/triangle.vertex.wgsl');
+        const redFragWGSL = await getWgsl('/web-gpu-examples/hello-triangle-msaa/triangle.fragment.wgsl');
         const canvas = document.getElementById("canvas-container");
 
         const adapter = await navigator.gpu.requestAdapter();
@@ -62,7 +62,6 @@
                 count: 4,
             }
         });
-
 
 
         const texture = device.createTexture({
