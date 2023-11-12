@@ -32,6 +32,7 @@
         });
 
         const pipeline = device.createRenderPipeline({
+            label: 'Hardcoded triangle pipeline',
             layout: 'auto',
             vertex: {
                 module: device.createShaderModule({
