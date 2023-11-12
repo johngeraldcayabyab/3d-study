@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test</title>
+</head>
+<body>
+<script src="tjs.js"></script>
+<!--<script src="main.js"></script>-->
+<script type="module">
+    (async () => {
+        const tjs = new TJS();
+        await tjs.init();
+
+        const module = tjs.device.createShaderModule({
+            label: 'Hard coded triangle shader',
+            code: await tjs.getWgsl('/web-gpu-fundamentals/fundamentals/triangle.wgsl')
+        });
+        const pipeline = tjs.device.createRenderPipeline({
+            label: 'our hardcoded red triangle pipeline',
+            layout: 'auto',
+            vertex: {
+                module,
+                entryPoint: 'vs',
+            },
+            fragment: {
+                module,
+                entryPoint: 'fs',
+                targets: [{format: tjs.presentationFormat}],
+            },
+        });
+
+        const textureView = tjs.context.getCurrentTexture().createView();
+        const renderPassDescriptor = {
+            label: 'Render pass descriptor',
+            colorAttachments: [
+                tjs.colorAttachments(textureView)
+            ]
+        };
+
+        function render() {
+            const encoder = tjs.device.createCommandEncoder({label: 'Encoder'});
+            const pass = encoder.beginRenderPass(renderPassDescriptor);
+            pass.setPipeline(pipeline);
+            pass.draw(3);
+            pass.end();
+            const commandBuffer = encoder.finish();
+            tjs.device.queue.submit([commandBuffer]);
+        }
+
+        render();
+    })();
+</script>
+
+</body>
+</html>
