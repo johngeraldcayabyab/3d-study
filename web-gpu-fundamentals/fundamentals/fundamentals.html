@@ -36,12 +36,7 @@
         const renderPassDescriptor = {
             label: 'Render pass descriptor',
             colorAttachments: [
-                {
-                    view: context.getCurrentTexture().createView(),
-                    clearValue: {r: 0, g: 0, b: 0, a: 1},
-                    loadOp: 'clear',
-                    storeOp: 'store'
-                }
+                colorAttachments(context.getCurrentTexture().createView())
             ]
         };
 
