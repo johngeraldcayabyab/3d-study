@@ -3,10 +3,11 @@ async function getWgsl(url) {
 }
 
 async function getAdapter() {
-    if (!navigator.gpu) {
+    const gpu = navigator.gpu;
+    if (!gpu) {
         throw new Error('WebGPU not supported in this browser');
     }
-    const adapter = await navigator.gpu.requestAdapter();
+    const adapter = await gpu.requestAdapter();
     if (!adapter) {
         throw new Error('No appropriate GPU adapter found');
     }
