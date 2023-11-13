@@ -11,7 +11,8 @@ class TJS {
         const presentationFormat = this.presentationFormat;
         this.context.configure({
             device,
-            format: presentationFormat
+            format: presentationFormat,
+            alphaMode: 'premultiplied',
         });
     }
 
