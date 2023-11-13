@@ -28,17 +28,20 @@ class TJS {
         return adapter;
     }
 
-    createContext(width = 512, height = 512) {
+    createContext(width = 500, height = 500) {
         const canvas = this.createCanvas(width, height);
         return canvas.getContext('webgpu');
     }
 
-    createCanvas(width = 512, height = 512, id = 'texture-1') {
+    createCanvas(width = 500, height = 500, id = 'texture-1') {
         const canvas = document.createElement("canvas");
+        canvas.id = id;
         canvas.width = width;
         canvas.height = height;
-        canvas.id = id;
         document.body.appendChild(canvas);
+        const devicePixelRatio = window.devicePixelRatio || 1;
+        canvas.width = canvas.clientWidth * devicePixelRatio;
+        canvas.height = canvas.clientHeight * devicePixelRatio;
         return canvas;
     }
 
