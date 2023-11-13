@@ -70,8 +70,8 @@
             passEncoder.setPipeline(pipeline);
             passEncoder.draw(3, 1, 0, 0);
             passEncoder.end();
-
-            device.queue.submit([commandEncoder.finish()]);
+            const commandBuffer = commandEncoder.finish();
+            device.queue.submit([commandBuffer]);
             requestAnimationFrame(frame);
         }
 

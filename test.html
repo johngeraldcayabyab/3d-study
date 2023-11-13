@@ -33,17 +33,18 @@
             },
         });
 
-        function render() {
-            const encoder = tjs.device.createCommandEncoder({label: 'Encoder'});
-            const pass = encoder.beginRenderPass(tjs.generateRenderPassDescriptor());
-            pass.setPipeline(pipeline);
-            pass.draw(3);
-            pass.end();
-            const commandBuffer = encoder.finish();
+        function frame() {
+            const commandEncoder = tjs.device.createCommandEncoder({label: 'Encoder'});
+            const passEncoder = commandEncoder.beginRenderPass(tjs.generateRenderPassDescriptor());
+            passEncoder.setPipeline(pipeline);
+            passEncoder.draw(3);
+            passEncoder.end();
+            const commandBuffer = commandEncoder.finish();
             tjs.device.queue.submit([commandBuffer]);
+            requestAnimationFrame(frame);
         }
 
-        render();
+        requestAnimationFrame(frame);
     })();
 </script>
 
