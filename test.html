@@ -12,21 +12,28 @@
         const tjs = new TJS();
         await tjs.init();
 
-        const module = tjs.device.createShaderModule({
-            label: 'Hard coded triangle shader',
-            code: await tjs.getWgsl('/web-gpu-fundamentals/fundamentals/triangle.wgsl')
-        });
+        const triangleVertWGSL = await tjs.getWgsl('/web-gpu-fundamentals/fundamentals/triangle.wgsl');
+        const redFragWGSL = await tjs.getWgsl('/web-gpu-fundamentals/fundamentals/triangle.wgsl');
+
         const pipeline = tjs.device.createRenderPipeline({
             label: 'our hardcoded red triangle pipeline',
             layout: 'auto',
             vertex: {
-                module,
+                module: tjs.device.createShaderModule({
+                    label: 'Hard coded triangle shader',
+                    code: triangleVertWGSL
+                }),
                 entryPoint: 'vs',
             },
             fragment: {
-                module,
+                module: tjs.device.createShaderModule({
+                    label: 'Hard coded triangle shader',
+                    code: redFragWGSL
+                }),
                 entryPoint: 'fs',
-                targets: [{format: tjs.presentationFormat}],
+                targets: [{
+                    format: tjs.presentationFormat
+                }],
             },
             primitive: {
                 topology: 'triangle-list',
@@ -37,7 +44,7 @@
             const commandEncoder = tjs.device.createCommandEncoder({label: 'Encoder'});
             const passEncoder = commandEncoder.beginRenderPass(tjs.generateRenderPassDescriptor());
             passEncoder.setPipeline(pipeline);
-            passEncoder.draw(3);
+            passEncoder.draw(3, 1, 0, 0);
             passEncoder.end();
             const commandBuffer = commandEncoder.finish();
             tjs.device.queue.submit([commandBuffer]);
