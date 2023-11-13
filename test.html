@@ -11,34 +11,9 @@
     (async () => {
         const tjs = new TJS();
         await tjs.init();
-
         const triangleVertWGSL = await tjs.getWgsl('/web-gpu-fundamentals/fundamentals/triangle.wgsl');
         const redFragWGSL = await tjs.getWgsl('/web-gpu-fundamentals/fundamentals/triangle.wgsl');
-
-        const pipeline = tjs.device.createRenderPipeline({
-            label: 'our hardcoded red triangle pipeline',
-            layout: 'auto',
-            vertex: {
-                module: tjs.device.createShaderModule({
-                    label: 'Hard coded triangle shader',
-                    code: triangleVertWGSL
-                }),
-                entryPoint: 'vs',
-            },
-            fragment: {
-                module: tjs.device.createShaderModule({
-                    label: 'Hard coded triangle shader',
-                    code: redFragWGSL
-                }),
-                entryPoint: 'fs',
-                targets: [{
-                    format: tjs.presentationFormat
-                }],
-            },
-            primitive: {
-                topology: 'triangle-list',
-            },
-        });
+        const pipeline = tjs.createPipeline(triangleVertWGSL, redFragWGSL);
 
         function frame() {
             const commandEncoder = tjs.device.createCommandEncoder({label: 'Encoder'});

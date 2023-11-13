@@ -16,6 +16,33 @@ class TJS {
         });
     }
 
+    createPipeline(vertexShader, fragmentShader) {
+        return this.device.createRenderPipeline({
+            label: 'our hardcoded red triangle pipeline',
+            layout: 'auto',
+            vertex: {
+                module: this.device.createShaderModule({
+                    label: 'Hard coded triangle shader',
+                    code: vertexShader
+                }),
+                entryPoint: 'vs',
+            },
+            fragment: {
+                module: this.device.createShaderModule({
+                    label: 'Hard coded triangle shader',
+                    code: fragmentShader
+                }),
+                entryPoint: 'fs',
+                targets: [{
+                    format: this.presentationFormat
+                }],
+            },
+            primitive: {
+                topology: 'triangle-list',
+            },
+        });
+    }
+
     async getAdapter() {
         const gpu = navigator.gpu;
         if (!gpu) {
