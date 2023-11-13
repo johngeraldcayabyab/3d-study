@@ -40,8 +40,10 @@ class TJS {
         canvas.height = height;
         document.body.appendChild(canvas);
         const devicePixelRatio = window.devicePixelRatio || 1;
-        canvas.width = canvas.clientWidth * devicePixelRatio;
-        canvas.height = canvas.clientHeight * devicePixelRatio;
+        canvas.style.width = width + "px";
+        canvas.style.height = height + "px";
+        canvas.width = width * devicePixelRatio;
+        canvas.height = height * devicePixelRatio;
         return canvas;
     }
 
