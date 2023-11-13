@@ -50,6 +50,17 @@ class TJS {
         };
     }
 
+    generateRenderPassDescriptor() {
+        const textureView = this.context.getCurrentTexture().createView();
+        return {
+            label: 'Render pass descriptor',
+            colorAttachments: [
+                this.colorAttachments(textureView)
+            ]
+        };
+    }
+
+
     async getWgsl(url) {
         return await fetch(url).then(response => response.text());
     }

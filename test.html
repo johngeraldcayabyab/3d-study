@@ -30,17 +30,9 @@
             },
         });
 
-        const textureView = tjs.context.getCurrentTexture().createView();
-        const renderPassDescriptor = {
-            label: 'Render pass descriptor',
-            colorAttachments: [
-                tjs.colorAttachments(textureView)
-            ]
-        };
-
         function render() {
             const encoder = tjs.device.createCommandEncoder({label: 'Encoder'});
-            const pass = encoder.beginRenderPass(renderPassDescriptor);
+            const pass = encoder.beginRenderPass(tjs.generateRenderPassDescriptor());
             pass.setPipeline(pipeline);
             pass.draw(3);
             pass.end();
