@@ -32,7 +32,7 @@ class TJS {
         const commandBuffer = commandEncoder.finish();
         this.device.queue.submit([commandBuffer]);
         requestAnimationFrame(this.render);
-        // return null;
+        return null;
     }
 
 

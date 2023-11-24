@@ -12,7 +12,9 @@
         await tjs.init();
         const shader = await tjs.getWgsl('/shaders/triangle.shader.wgsl');
         const pipeline = tjs.createPipeline(shader);
-        requestAnimationFrame(tjs.render(pipeline));
+        requestAnimationFrame(() => {
+            tjs.render(pipeline);
+        });
     })();
 </script>
 
