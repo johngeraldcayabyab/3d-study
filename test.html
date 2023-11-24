@@ -6,27 +6,13 @@
 </head>
 <body>
 <script src="tjs.js"></script>
-<!--<script src="main.js"></script>-->
 <script type="module">
     (async () => {
         const tjs = new TJS();
         await tjs.init();
         const triangleVertWGSL = await tjs.getWgsl('/web-gpu-fundamentals/fundamentals/triangle.wgsl');
         const redFragWGSL = await tjs.getWgsl('/web-gpu-fundamentals/fundamentals/triangle.wgsl');
-        const pipeline = tjs.createPipeline(triangleVertWGSL, redFragWGSL);
-
-        function frame() {
-            const commandEncoder = tjs.device.createCommandEncoder({label: 'Encoder'});
-            const passEncoder = commandEncoder.beginRenderPass(tjs.generateRenderPassDescriptor());
-            passEncoder.setPipeline(pipeline);
-            passEncoder.draw(3, 1, 0, 0);
-            passEncoder.end();
-            const commandBuffer = commandEncoder.finish();
-            tjs.device.queue.submit([commandBuffer]);
-            requestAnimationFrame(frame);
-        }
-
-        requestAnimationFrame(frame);
+        requestAnimationFrame(tjs.renderPipeline(triangleVertWGSL, redFragWGSL));
     })();
 </script>
 

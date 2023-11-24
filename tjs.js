@@ -16,6 +16,25 @@ class TJS {
         });
     }
 
+    renderPipeline(vertexShader, fragmentShader) {
+        const pipeline = this.createPipeline(vertexShader, fragmentShader);
+        this.render(pipeline);
+        return null;
+    }
+
+    render(pipeline) {
+        const commandEncoder = this.device.createCommandEncoder({label: 'Encoder'});
+        const passEncoder = commandEncoder.beginRenderPass(this.generateRenderPassDescriptor());
+        passEncoder.setPipeline(pipeline);
+        passEncoder.draw(3, 1, 0, 0);
+        passEncoder.end();
+        const commandBuffer = commandEncoder.finish();
+        this.device.queue.submit([commandBuffer]);
+        requestAnimationFrame(this.render);
+        return null;
+    }
+
+
     createPipeline(vertexShader, fragmentShader) {
         return this.device.createRenderPipeline({
             label: 'our hardcoded red triangle pipeline',
