@@ -27,7 +27,7 @@ class TJS {
         const commandEncoder = this.device.createCommandEncoder({label: 'Encoder'});
         const passEncoder = commandEncoder.beginRenderPass(this.generateRenderPassDescriptor());
         passEncoder.setPipeline(pipeline);
-        passEncoder.draw(3, 1, 0, 0);
+        passEncoder.draw(6, 1, 0, 0);
         passEncoder.end();
         const commandBuffer = commandEncoder.finish();
         this.device.queue.submit([commandBuffer]);
