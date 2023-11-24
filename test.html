@@ -10,9 +10,9 @@
     (async () => {
         const tjs = new TJS();
         await tjs.init();
-        const triangleVertWGSL = await tjs.getWgsl('/web-gpu-fundamentals/fundamentals/triangle.wgsl');
-        const redFragWGSL = await tjs.getWgsl('/web-gpu-fundamentals/fundamentals/triangle.wgsl');
-        requestAnimationFrame(tjs.renderPipeline(triangleVertWGSL, redFragWGSL));
+        const shader = await tjs.getWgsl('/shaders/triangle.shader.wgsl');
+        const pipeline = tjs.createPipeline(shader);
+        requestAnimationFrame(tjs.render(pipeline));
     })();
 </script>
 

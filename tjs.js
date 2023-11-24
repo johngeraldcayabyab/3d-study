@@ -16,8 +16,9 @@ class TJS {
         });
     }
 
-    renderPipeline(vertexShader, fragmentShader) {
-        const pipeline = this.createPipeline(vertexShader, fragmentShader);
+    renderPipeline(shader) {
+        // Theres an issue when using this with request animation frame
+        const pipeline = this.createPipeline(shader);
         this.render(pipeline);
         return null;
     }
@@ -31,25 +32,25 @@ class TJS {
         const commandBuffer = commandEncoder.finish();
         this.device.queue.submit([commandBuffer]);
         requestAnimationFrame(this.render);
-        return null;
+        // return null;
     }
 
 
-    createPipeline(vertexShader, fragmentShader) {
+    createPipeline(shader) {
         return this.device.createRenderPipeline({
             label: 'our hardcoded red triangle pipeline',
             layout: 'auto',
             vertex: {
                 module: this.device.createShaderModule({
                     label: 'Hard coded triangle shader',
-                    code: vertexShader
+                    code: shader
                 }),
                 entryPoint: 'vs',
             },
             fragment: {
                 module: this.device.createShaderModule({
                     label: 'Hard coded triangle shader',
-                    code: fragmentShader
+                    code: shader
                 }),
                 entryPoint: 'fs',
                 targets: [{
