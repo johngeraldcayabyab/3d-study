@@ -10,6 +10,8 @@ fn vs(
        vec2(0.3, -0.3),
        vec2(-0.3, -0.3),
   );
+
+  return vec4<f32>(pos[VertexIndex], 0.0, 1.0);
 }
 
 @fragment

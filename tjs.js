@@ -23,11 +23,11 @@ class TJS {
         return null;
     }
 
-    render(pipeline) {
+    render(pipeline, vertexCount) {
         const commandEncoder = this.device.createCommandEncoder({label: 'Encoder'});
         const passEncoder = commandEncoder.beginRenderPass(this.generateRenderPassDescriptor());
         passEncoder.setPipeline(pipeline);
-        passEncoder.draw(3, 1, 0, 0);
+        passEncoder.draw(vertexCount, 1, 0, 0);
         passEncoder.end();
         const commandBuffer = commandEncoder.finish();
         this.device.queue.submit([commandBuffer]);
@@ -59,6 +59,33 @@ class TJS {
             },
             primitive: {
                 topology: Topology.TRIANGLE_LIST,
+            },
+        });
+    }
+
+    createRectanglePipeline(shader) {
+        return this.device.createRenderPipeline({
+            label: 'our hardcoded red rectangle pipeline',
+            layout: 'auto',
+            vertex: {
+                module: this.device.createShaderModule({
+                    label: 'Hard coded rectangle shader',
+                    code: shader
+                }),
+                entryPoint: 'vs',
+            },
+            fragment: {
+                module: this.device.createShaderModule({
+                    label: 'Hard coded rectangle shader',
+                    code: shader
+                }),
+                entryPoint: 'fs',
+                targets: [{
+                    format: this.presentationFormat
+                }],
+            },
+            primitive: {
+                topology: Topology.TRIANGLE_STRIP,
             },
         });
     }
