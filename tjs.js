@@ -4,10 +4,10 @@ class TJS {
 
     async init() {
         this.adapter = await this.getAdapter();
-        this.device = await this.adapter.requestDevice();
+        const device = await this.adapter.requestDevice();
+        this.device = device;
         this.context = this.createContext();
         this.presentationFormat = navigator.gpu.getPreferredCanvasFormat();
-        const device = this.device;
         const presentationFormat = this.presentationFormat;
         this.context.configure({
             device,
@@ -31,7 +31,7 @@ class TJS {
         passEncoder.end();
         const commandBuffer = commandEncoder.finish();
         this.device.queue.submit([commandBuffer]);
-        requestAnimationFrame(this.render);
+        requestAnimationFrame(() => this.render(pipeline, vertexCount));
         return null;
     }
 
