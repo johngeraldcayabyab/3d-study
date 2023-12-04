@@ -5,13 +5,14 @@
     <title>Test</title>
 </head>
 <body>
+<script src="topology.js"></script>
 <script src="tjs.js"></script>
 <script type="module">
     (async () => {
         const tjs = new TJS();
         await tjs.init();
         const shader = await tjs.getWgsl('/shaders/triangle.shader.wgsl');
-        const pipeline = tjs.createPipeline(shader);
+        const pipeline = tjs.createTrianglePipeline(shader);
         requestAnimationFrame(() => {
             tjs.render(pipeline);
         });

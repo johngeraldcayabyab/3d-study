@@ -18,7 +18,7 @@ class TJS {
 
     renderPipeline(shader) {
         // Theres an issue when using this with request animation frame
-        const pipeline = this.createPipeline(shader);
+        const pipeline = this.createTrianglePipeline(shader);
         this.render(pipeline);
         return null;
     }
@@ -36,7 +36,7 @@ class TJS {
     }
 
 
-    createPipeline(shader) {
+    createTrianglePipeline(shader) {
         return this.device.createRenderPipeline({
             label: 'our hardcoded red triangle pipeline',
             layout: 'auto',
@@ -58,7 +58,7 @@ class TJS {
                 }],
             },
             primitive: {
-                topology: 'triangle-list',
+                topology: Topology.TRIANGLE_LIST,
             },
         });
     }
