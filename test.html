@@ -11,10 +11,10 @@
     (async () => {
         const tjs = new TJS();
         await tjs.init();
-        const shader = await tjs.getWgsl('/shaders/rectangle.shader.wgsl');
+        const shader = await tjs.getWgsl('/shaders/triangle-inter.shader.wgsl');
         const pipeline = tjs.createRectanglePipeline(shader);
         requestAnimationFrame(() => {
-            tjs.render(pipeline, 6);
+            tjs.render(pipeline, 3);
         });
     })();
 </script>
