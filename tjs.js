@@ -35,6 +35,30 @@ class TJS {
         return null;
     }
 
+    createUniformBuffer(uniformBufferSize) {
+        const uniformBuffer = this.device.createBuffer({
+            label: 'uniforms for triangle',
+            size: uniformBufferSize,
+            usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+        });
+        const uniformValues = new Float32Array(uniformBufferSize / 4);
+        const kColorOffset = 0;
+        const kScaleOffset = 4;
+        const kOffsetOffset = 6;
+        uniformValues.set([0, 1, 0, 1], kColorOffset);
+        uniformValues.set([-0.5, -0.25], kOffsetOffset);
+    }
+
+    createBindGroup(uniformBuffer, pipeline) {
+        return this.device.createBindGroup({
+            label: 'triangle bind group',
+            layout: pipeline.getBindGroupLayout(0),
+            entries: [
+                {binding: 0, resource: {buffer: uniformBuffer}},
+            ],
+        });
+    }
+
 
     createTrianglePipeline(shader) {
         return this.device.createRenderPipeline({
