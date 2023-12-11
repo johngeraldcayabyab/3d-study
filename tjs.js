@@ -26,6 +26,7 @@ class TJS {
     }
 
     render(pipeline, vertexCount) {
+        // const aspect = this.canvas.width
         const commandEncoder = this.device.createCommandEncoder({label: 'Encoder'});
         const passEncoder = commandEncoder.beginRenderPass(this.generateRenderPassDescriptor());
         passEncoder.setPipeline(pipeline);
