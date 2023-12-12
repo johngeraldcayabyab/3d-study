@@ -6,7 +6,9 @@ class TJS {
         this.adapter = await this.getAdapter();
         const device = await this.adapter.requestDevice();
         this.device = device;
-        this.context = this.createContext();
+        const canvas = this.createCanvas(500, 500);
+        this.canvas = canvas;
+        this.context = this.createContext(canvas);
         this.presentationFormat = navigator.gpu.getPreferredCanvasFormat();
         const presentationFormat = this.presentationFormat;
         this.context.configure({
@@ -24,6 +26,7 @@ class TJS {
     }
 
     render(pipeline, vertexCount) {
+        // const aspect = this.canvas.width
         const commandEncoder = this.device.createCommandEncoder({label: 'Encoder'});
         const passEncoder = commandEncoder.beginRenderPass(this.generateRenderPassDescriptor());
         passEncoder.setPipeline(pipeline);
@@ -126,8 +129,7 @@ class TJS {
         return adapter;
     }
 
-    createContext(width = 500, height = 500) {
-        const canvas = this.createCanvas(width, height);
+    createContext(canvas) {
         return canvas.getContext('webgpu');
     }
 
