@@ -5,6 +5,16 @@ class TJS {
     async init() {
         this.adapter = await this.getAdapter();
         const device = await this.adapter.requestDevice();
+        device.lost.then((info) => {
+            console.error(`WebGPU device was lost: ${info.message}`);
+            // 'reason' will be 'destroyed' if we intentionally destroy the device.
+            if (info.reason !== 'destroyed') {
+                // try again
+                info('try again');
+            }
+        });
+
+
         this.device = device;
         const canvas = this.createCanvas(500, 500);
         this.canvas = canvas;
