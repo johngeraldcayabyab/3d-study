@@ -44,7 +44,7 @@
 
       struct OurStruct {
         color: vec4f,
-        pos : array<vec4<f32>, 3>
+        pos : array<vec4<f32>, 6>
       };
 
       @group(0) @binding(0) var<uniform> ourStruct: OurStruct;
@@ -69,6 +69,10 @@
             0.0,  0.6, 0.0, 1.0,
             -0.5, -0.5, 0.0, 1.0,
             0.5, -0.5, 0.0, 1.0,
+
+           0.5,  1.0,  0.0, 1.0, // top center (shifted right and up)
+           -0.2, -0.2,  0.0, 1.0, // bottom left (shifted right and up)
+            0.8, -0.2, 0.0, 1.0,
         ]);
 
 
@@ -124,7 +128,7 @@
             const pass = encoder.beginRenderPass(renderPassDescriptor);
             pass.setPipeline(pipeline);
             pass.setBindGroup(0, bindGroup);
-            pass.draw(3);  // call our vertex shader 3 times
+            pass.draw(6);  // call our vertex shader 3 times
             pass.end();
 
             const commandBuffer = encoder.finish();
