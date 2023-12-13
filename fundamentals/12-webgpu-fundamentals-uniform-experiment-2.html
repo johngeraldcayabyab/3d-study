@@ -17,9 +17,6 @@
             height: 100%;
         }
     </style>
-    <script type="module">
-        import * as WebGPUUtils from 'https://greggman.github.io/webgpu-utils/dist/0.x/webgpu-utils.module.js';
-    </script>
 </head>
 <body>
 <canvas></canvas>
@@ -31,6 +28,7 @@
             fail('need a browser that supports WebGPU');
             return;
         }
+
         // Get a WebGPU context from the canvas and configure it
         const canvas = document.querySelector('canvas');
         const context = canvas.getContext('webgpu');
@@ -41,26 +39,21 @@
         });
 
         const module = device.createShaderModule({
+            label: 'our hardcoded red triangle shaders',
             code: `
+
       struct OurStruct {
         color: vec4f,
-        scale: vec2f,
-        offset: vec2f,
+        pos : array<vec4<f32>, 3>
       };
 
       @group(0) @binding(0) var<uniform> ourStruct: OurStruct;
 
+
       @vertex fn vs(
         @builtin(vertex_index) vertexIndex : u32
       ) -> @builtin(position) vec4f {
-        let pos = array(
-          vec2f( 0.0,  0.5),  // top center
-          vec2f(-0.5, -0.5),  // bottom left
-          vec2f( 0.5, -0.5)   // bottom right
-        );
-
-        return vec4f(
-          pos[vertexIndex] * ourStruct.scale + ourStruct.offset, 0.0, 1.0);
+        return ourStruct.pos[vertexIndex];
       }
 
       @fragment fn fs() -> @location(0) vec4f {
@@ -69,8 +62,29 @@
     `,
         });
 
+        const uniformBufferSize =
+            4 * 4 + // color is 4 32bit floats (4bytes)
+            4 * 12
+        ;
+
+
+        const uniformBuffer = device.createBuffer({
+            label: 'uniforms for triangle',
+            size: uniformBufferSize,
+            usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+        });
+
+        const uniformValues = new Float32Array([
+            1.0, 0.0, 1.0, 1.0, // color
+
+            //Triangle
+            0.0,  0.6, 0.0, 1.0,
+            -0.5, -0.5, 0.0, 1.0,
+            0.5, -0.5, 0.0, 1.0,
+        ]);
+
         const pipeline = device.createRenderPipeline({
-            label: 'triangle with uniforms',
+            label: 'our hardcoded red triangle pipeline',
             layout: 'auto',
             vertex: {
                 module,
@@ -79,37 +93,9 @@
             fragment: {
                 module,
                 entryPoint: 'fs',
-                targets: [{ format: presentationFormat }],
+                targets: [{format: presentationFormat}],
             },
         });
-
-        // create a buffer for the uniform values
-        const uniformBufferSize =
-            4 * 4 + // color is 4 32bit floats (4bytes each)
-            2 * 4 + // scale is 2 32bit floats (4bytes each)
-            2 * 4;  // offset is 2 32bit floats (4bytes each)
-        const uniformBuffer = device.createBuffer({
-            label: 'uniforms for triangle',
-            size: uniformBufferSize,
-            usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
-        });
-
-        console.log('uniform buffer size', uniformBufferSize);
-
-        // create a typedarray to hold the values for the uniforms in JavaScript
-        const uniformValues = new Float32Array(uniformBufferSize / 4);
-
-        console.log('uniform values', uniformValues);
-
-        // offsets to the various uniform values in float32 indices
-        const kColorOffset = 0;
-        const kScaleOffset = 4;
-        const kOffsetOffset = 6;
-
-        uniformValues.set([0, 1, 0, 1], kColorOffset);        // set the color
-        uniformValues.set([-0.5, -0.25], kOffsetOffset);      // set the offset
-
-        console.log('uniform values', uniformValues);
 
         const bindGroup = device.createBindGroup({
             label: 'triangle bind group',
@@ -118,6 +104,7 @@
                 { binding: 0, resource: { buffer: uniformBuffer }},
             ],
         });
+
 
         const renderPassDescriptor = {
             label: 'our basic canvas renderPass',
@@ -132,19 +119,13 @@
         };
 
         function render() {
-            // Set the uniform values in our JavaScript side Float32Array
-            const aspect = canvas.width / canvas.height;
-            uniformValues.set([1 / aspect, 1], kScaleOffset); // set the scale
-
-            // copy the values from JavaScript to the GPU
             device.queue.writeBuffer(uniformBuffer, 0, uniformValues);
-
             // Get the current texture from the canvas context and
             // set it as the texture to render to.
             renderPassDescriptor.colorAttachments[0].view =
                 context.getCurrentTexture().createView();
 
-            const encoder = device.createCommandEncoder();
+            const encoder = device.createCommandEncoder({label: 'our encoder'});
             const pass = encoder.beginRenderPass(renderPassDescriptor);
             pass.setPipeline(pipeline);
             pass.setBindGroup(0, bindGroup);
@@ -155,26 +136,15 @@
             device.queue.submit([commandBuffer]);
         }
 
-        const observer = new ResizeObserver(entries => {
-            for (const entry of entries) {
-                const canvas = entry.target;
-                const width = entry.contentBoxSize[0].inlineSize;
-                const height = entry.contentBoxSize[0].blockSize;
-                canvas.width = Math.max(1, Math.min(width, device.limits.maxTextureDimension2D));
-                canvas.height = Math.max(1, Math.min(height, device.limits.maxTextureDimension2D));
-                // re-render
-                render();
-            }
-        });
-        observer.observe(canvas);
+        render();
     }
 
     function fail(msg) {
+        // eslint-disable-next-line no-alert
         alert(msg);
     }
 
     main();
-
 
 </script>
 </body>
