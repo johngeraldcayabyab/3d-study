@@ -83,10 +83,10 @@
         for (let i = 0; i < 100; ++i) {
 
             const scale = rand(-0.9, 0.9);
-            const offset = getRandomNumber();
-            const r = getRandomNumber();
-            const g = getRandomNumber();
-            const b = getRandomNumber();
+            const offset = rand();
+            const r = rand();
+            const g = rand();
+            const b = rand();
 
             const bufferObject = {};
             const uniformValues = new Float32Array([
@@ -98,11 +98,9 @@
                 (0.5 * scale + offset), (-0.5 * scale + offset), 0.0, 1.0,
             ]);
 
-            console.log(Math.ceil(uniformValues.byteLength / 256) * 256);
-
             const uniformBuffer = device.createBuffer({
                 label: `uniforms for triangle ${i}`,
-                size: Math.ceil(uniformValues.byteLength / 256) * 256,
+                size: 256,
                 usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
             });
 
