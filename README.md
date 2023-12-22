@@ -15,6 +15,8 @@ https://webgpu.github.io/webgpu-samples/samples/helloTriangle
 https://codelabs.developers.google.com/your-first-webgpu-app
 <br>
 https://webgpufundamentals.org/webgpu/lessons/
+<br>
+https://google.github.io/tour-of-wgsl/
 
 
 
