@@ -83,8 +83,15 @@
                 return vsOutput;
               }
 
-              @fragment fn fs(fsInput: VertexOutput) -> @location(0) vec4f {
-                return fsInput.color;
+              @fragment fn fs(@builtin(position) pixelPosition: vec4f) -> @location(0) vec4f {
+                 let red = vec4f(1, 0, 0, 1);
+        let cyan = vec4f(0, 1, 1, 1);
+
+
+        let grid = vec2u(pixelPosition.xy) / 8;
+        let checker = (grid.x + grid.y) % 2 == 1;
+
+        return select(red, cyan, checker);
               }
             `,
         });
@@ -188,8 +195,6 @@
 
         function render() {
             resizeCanvasToDisplaySize(canvas);
-
-
             renderPassDescriptor.colorAttachments[0].view = context.getCurrentTexture().createView();
 
             const encoder = device.createCommandEncoder({label: 'our encoder'});
@@ -203,6 +208,10 @@
 
             device.queue.writeBuffer(bindGroups[1].uniformBuffer, 0, bindGroups[1].uniformValues);
             pass.setBindGroup(0, bindGroups[1].bindGroup);
+            pass.draw(3);
+
+            device.queue.writeBuffer(bindGroups[2].uniformBuffer, 0, bindGroups[2].uniformValues);
+            pass.setBindGroup(0, bindGroups[2].bindGroup);
             pass.draw(3);
 
             pass.end();
