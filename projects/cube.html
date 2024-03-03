@@ -65,9 +65,9 @@
                 @builtin(vertex_index) vertexIndex : u32
               ) -> VertexOutput {
                 let pos = array(
-                  vec2f( 0.0,  0.5),  // top center
-                  vec2f(-0.5, -0.5),  // bottom left
-                  vec2f( 0.5, -0.5)   // bottom right
+                  vec2f( 0.0,  0.3),  // top center
+                  vec2f(-0.3, -0.3),  // bottom left
+                  vec2f( 0.3, -0.3)   // bottom right
                 );
 
                 let color = array<vec4f, 3>(
@@ -107,30 +107,41 @@
         // const scaleBufferSize = 2 * 4;
         const offsetBufferSize = 2 * 4;
         const uniformBufferSize = offsetBufferSize;
+        const numberOfTriangles = 10;
 
-        const uniformBuffer = device.createBuffer({
-            label: 'uniforms for triangle',
-            size: uniformBufferSize,
-            usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
-        });
+        const bindGroups = [];
 
-        const uniformValues = new Float32Array(uniformBufferSize / 4);
-        const kOffsetOffset = 0;
-        console.log(uniformValues);
-        uniformValues.set([rand(), rand()], kOffsetOffset);
+        for (let i = 0; i < numberOfTriangles; i++) {
+            const uniformBuffer = device.createBuffer({
+                label: 'uniforms for triangle',
+                size: uniformBufferSize,
+                usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+            });
+            const uniformValues = new Float32Array(uniformBufferSize / 4);
+            const kOffsetOffset = 0;
+            console.log(uniformValues);
+            uniformValues.set([rand(), rand()], kOffsetOffset);
 
-        const bindGroup = device.createBindGroup({
-            label: 'triangle bind group',
-            layout: pipeline.getBindGroupLayout(0),
-            entries: [
-                {
-                    binding: 0,
-                    resource: {
-                        buffer: uniformBuffer
+            const bindGroup = device.createBindGroup({
+                label: 'triangle bind group',
+                layout: pipeline.getBindGroupLayout(0),
+                entries: [
+                    {
+                        binding: 0,
+                        resource: {
+                            buffer: uniformBuffer
+                        }
                     }
-                }
-            ],
-        });
+                ],
+            });
+
+            bindGroups.push({
+                uniformBuffer,
+                uniformValues,
+                bindGroup,
+            });
+        }
+
 
         const renderPassDescriptor = {
             label: 'our basic canvas renderPass',
@@ -178,7 +189,6 @@
         function render() {
             resizeCanvasToDisplaySize(canvas);
 
-            device.queue.writeBuffer(uniformBuffer, 0, uniformValues);
 
             renderPassDescriptor.colorAttachments[0].view = context.getCurrentTexture().createView();
 
@@ -186,8 +196,13 @@
 
             const pass = encoder.beginRenderPass(renderPassDescriptor);
             pass.setPipeline(pipeline);
-            pass.setBindGroup(0, bindGroup);
-            pass.draw(3);
+
+            for (const {uniformBuffer, uniformValues, bindGroup} of bindGroups) {
+                device.queue.writeBuffer(uniformBuffer, 0, uniformValues);
+                pass.setBindGroup(0, bindGroup);
+                pass.draw(3);
+            }
+
             pass.end();
 
             const commandBuffer = encoder.finish();
