@@ -19,5 +19,8 @@ https://webgpufundamentals.org/webgpu/lessons/
 https://google.github.io/tour-of-wgsl/
 
 
+<p><code>In a vertex shader @builtin(position) is the output that the GPU needs to draw triangles/lines/points</code></p>
+<p><code>In a fragment shader, @builtin(position) is an input. It’s the pixel coordinate of the pixel that the fragment shader is currently being asked to compute a color for.</code></p>
+
 
 
