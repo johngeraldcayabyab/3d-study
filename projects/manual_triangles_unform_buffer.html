@@ -111,23 +111,12 @@
             },
         });
 
-        // 2 f32 means 2 floating point 32 bit integer means = 32 bits = 4 bytes means 4 * 2
-        const offsetBufferSize = 2 * 4;
-        const scaleBufferSize = 2 * 4;
-        const uniformBufferSize = offsetBufferSize + scaleBufferSize;
-
 
         const numberOfTriangles = 3;
 
         const bindGroups = [];
 
         for (let i = 0; i < numberOfTriangles; i++) {
-            const uniformBuffer = device.createBuffer({
-                label: 'uniforms for triangle',
-                size: uniformBufferSize,
-                usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
-            });
-
 
             const scaleValue = rand();
             const uniformValues = new Float32Array([
@@ -135,6 +124,11 @@
                 scaleValue, scaleValue
             ]);
 
+            const uniformBuffer = device.createBuffer({
+                label: 'uniforms for triangle',
+                size: uniformValues.byteLength,
+                usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+            });
 
             const bindGroup = device.createBindGroup({
                 label: 'triangle bind group',

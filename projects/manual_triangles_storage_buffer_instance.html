@@ -60,7 +60,7 @@
                 scale: vec2f
               };
 
-              @group(0) @binding(0) var<storage> attributes: Attributes;
+              @group(0) @binding(0) var<storage, read> attributes: array<Attributes>;
 
               @vertex fn vs(
                 @builtin(vertex_index) vertexIndex : u32,
@@ -79,7 +79,8 @@
                 );
 
                 var vsOutput : VertexOutput;
-                vsOutput.position = vec4(pos[vertexIndex] * attributes.scale + attributes.offset, 0.0, 1.0);
+                var attribute : attributes[instanceIndex];
+                vsOutput.position = vec4(pos[vertexIndex] * attribute.scale + attribute.offset, 0.0, 1.0);
                 vsOutput.color = color[vertexIndex];
 
                 return vsOutput;
@@ -120,42 +121,37 @@
 
         const numberOfTriangles = 3;
 
-        const bindGroups = [];
+        // const bindGroups = [];
 
-        for (let i = 0; i < numberOfTriangles; i++) {
-            const storageBuffer = device.createBuffer({
-                label: 'storages for triangle',
-                size: storageBufferSize,
-                usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
-            });
+        // const objectInfos = [];
 
-
-            const scaleValue = rand();
-            const storageValues = new Float32Array([
-                rand(), rand(),
-                scaleValue, scaleValue
-            ]);
+        // for (let i = 0; i < numberOfTriangles; i++) {
+        //     const scaleValue = rand();
+        //     objectInfos.push(new Float32Array([
+        //         rand(), rand(),
+        //         scaleValue, scaleValue
+        //     ]))
+        // }
 
 
-            const bindGroup = device.createBindGroup({
-                label: 'triangle bind group',
-                layout: pipeline.getBindGroupLayout(0),
-                entries: [
-                    {
-                        binding: 0,
-                        resource: {
-                            buffer: storageBuffer
-                        }
-                    }
-                ],
-            });
-
-            bindGroups.push({
-                storageBuffer,
-                storageValues,
-                bindGroup,
-            });
-        }
+        // const bindGroup = device.createBindGroup({
+        //     label: 'triangle bind group',
+        //     layout: pipeline.getBindGroupLayout(0),
+        //     entries: [
+        //         {
+        //             binding: 0,
+        //             resource: {
+        //                 buffer: storageBuffer
+        //             }
+        //         }
+        //     ],
+        // });
+        //
+        // bindGroups.push({
+        //     storageBuffer,
+        //     storageValues,
+        //     bindGroup,
+        // });
 
 
         const renderPassDescriptor = {
