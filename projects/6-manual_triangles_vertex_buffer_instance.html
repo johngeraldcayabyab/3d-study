@@ -50,10 +50,7 @@
         const module = device.createShaderModule({
             label: 'our hardcoded red triangle shaders',
             code: `
-              struct VertexOutput {
-                @builtin(position) position: vec4f,
-                @location(0) color: vec4f,
-              };
+
 
               struct Attributes {
                 offset: vec2f,
@@ -70,7 +67,7 @@
               @vertex fn vs(
                 @builtin(vertex_index) vertexIndex : u32,
                 @builtin(instance_index) instanceIndex: u32
-              ) -> VertexOutput {
+              ) -> @builtin(position) vec4f {
 
                 let color = array<vec4f, 3>(
                    vec4f(1 ,0, 0, 1),
@@ -80,11 +77,8 @@
 
                 let attributed= attributes[instanceIndex];
 
-                var vsOutput : VertexOutput;
-                vsOutput.position = vec4(pos[vertexIndex].position * attributed.scale + attributed.offset, 0.0, 1.0);
-                vsOutput.color = color[vertexIndex];
 
-                return vsOutput;
+                return vec4(pos[vertexIndex].position * attributed.scale + attributed.offset, 0.0, 1.0);
               }
 
               @fragment fn fs(@builtin(position) pixelPosition: vec4f) -> @location(0) vec4f {
