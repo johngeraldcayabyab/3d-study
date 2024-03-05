@@ -37,16 +37,13 @@
         });
 
         const module = device.createShaderModule({
-            label: 'our hardcoded rgb triangle shaders',
+            label: 'our hardcoded rgb square shaders',
             code: `
-      struct OurVertexShaderOutput {
-        @builtin(position) position: vec4f,
-        @location(0) color: vec4f,
-      };
+
 
       @vertex fn vs(
         @builtin(vertex_index) vertexIndex : u32
-      ) -> OurVertexShaderOutput {
+      ) -> @builtin(position) vec4f {
         let pos = array(
           vec2f(-0.5, 0.5),
           vec2f(0.5, 0.5),
@@ -64,26 +61,17 @@
            vec2f(-.5, -.5),
         );
 
-        var color = array<vec4f, 3>(
-          vec4f(1, 0, 0, 1), // red
-          vec4f(0, 1, 0, 1), // green
-          vec4f(0, 0, 1, 1), // blue
-        );
-
-        var vsOutput: OurVertexShaderOutput;
-        vsOutput.position = vec4f(pos[vertexIndex], 0.0, 1.0);
-        vsOutput.color = color[vertexIndex];
-        return vsOutput;
+        return vec4f(pos[vertexIndex], 0.0, 1.0);
       }
 
-      @fragment fn fs(fsInput: OurVertexShaderOutput) -> @location(0) vec4f {
-        return fsInput.color;
+      @fragment fn fs() -> @location(0) vec4f {
+        return vec4(1, 0,0 ,1);
       }
     `,
         });
 
         const pipeline = device.createRenderPipeline({
-            label: 'hardcoded rgb triangle pipeline',
+            label: 'hardcoded rgb square pipeline',
             layout: 'auto',
             vertex: {
                 module,
@@ -92,7 +80,7 @@
             fragment: {
                 module,
                 entryPoint: 'fs',
-                targets: [{ format: presentationFormat }],
+                targets: [{format: presentationFormat}],
             },
         });
 
@@ -108,6 +96,25 @@
             ],
         };
 
+
+        const squareVertices = new Float32Array([
+            -0.5, 0.5,
+            0.5, 0.5,
+            -0.5, -0.5,
+
+            0.5, 0.5,
+            0.5, -0.5,
+            -0.5, -0.5,
+        ]);
+
+        const squareVertexBuffer = device.createBuffer({
+            label: 'vertex buffer vertices',
+            size: squareVertices.byteLength,
+            usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST,
+        });
+
+        device.queue.writeBuffer(squareVertexBuffer, 0, squareVertices);
+
         function render() {
             // Get the current texture from the canvas context and
             // set it as the texture to render to.
@@ -115,7 +122,7 @@
                 context.getCurrentTexture().createView();
 
             const encoder = device.createCommandEncoder({
-                label: 'render triangle encoder',
+                label: 'render square encoder',
             });
             const pass = encoder.beginRenderPass(renderPassDescriptor);
             pass.setPipeline(pipeline);
