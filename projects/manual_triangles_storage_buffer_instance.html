@@ -78,9 +78,12 @@
                    vec4f(0 ,0, 1, 1),
                 );
 
+                let attributed= attributes[instanceIndex];
+
+
+
                 var vsOutput : VertexOutput;
-                var attribute : attributes[instanceIndex];
-                vsOutput.position = vec4(pos[vertexIndex] * attribute.scale + attribute.offset, 0.0, 1.0);
+                vsOutput.position = vec4(pos[vertexIndex] * attributed.scale + attributed.offset, 0.0, 1.0);
                 vsOutput.color = color[vertexIndex];
 
                 return vsOutput;
@@ -113,46 +116,38 @@
             },
         });
 
-        // 2 f32 means 2 floating point 32 bit integer means = 32 bits = 4 bytes means 4 * 2
-        const offsetBufferSize = 2 * 4;
-        const scaleBufferSize = 2 * 4;
-        const storageBufferSize = offsetBufferSize + scaleBufferSize;
+
+        const scaleSize = .5;
+        const objectInfos = new Float32Array([
+            rand(), rand(),
+            scaleSize, scaleSize,
+            rand(), rand(),
+            scaleSize, scaleSize,
+        ]);
 
 
-        const numberOfTriangles = 3;
 
-        // const bindGroups = [];
+        const storageBuffer = device.createBuffer({
+            label: 'storage buffer',
+            size: objectInfos.byteLength,
+            usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
+        });
 
-        // const objectInfos = [];
-
-        // for (let i = 0; i < numberOfTriangles; i++) {
-        //     const scaleValue = rand();
-        //     objectInfos.push(new Float32Array([
-        //         rand(), rand(),
-        //         scaleValue, scaleValue
-        //     ]))
-        // }
+        device.queue.writeBuffer(storageBuffer, 0, objectInfos);
 
 
-        // const bindGroup = device.createBindGroup({
-        //     label: 'triangle bind group',
-        //     layout: pipeline.getBindGroupLayout(0),
-        //     entries: [
-        //         {
-        //             binding: 0,
-        //             resource: {
-        //                 buffer: storageBuffer
-        //             }
-        //         }
-        //     ],
-        // });
-        //
-        // bindGroups.push({
-        //     storageBuffer,
-        //     storageValues,
-        //     bindGroup,
-        // });
-
+        const bindGroup = device.createBindGroup({
+            label: 'triangle bind group',
+            layout: pipeline.getBindGroupLayout(0),
+            entries: [
+                {
+                    binding: 0,
+                    resource: {
+                        buffer: storageBuffer
+                    }
+                }
+            ],
+        });
 
         const renderPassDescriptor = {
             label: 'our basic canvas renderPass',
@@ -206,12 +201,8 @@
             const pass = encoder.beginRenderPass(renderPassDescriptor);
             pass.setPipeline(pipeline);
 
-            bindGroups.forEach((bindGroup) => {
-                device.queue.writeBuffer(bindGroup.storageBuffer, 0, bindGroup.storageValues);
-                pass.setBindGroup(0, bindGroup.bindGroup);
-                pass.draw(3);
-            });
-
+            pass.setBindGroup(0, bindGroup);
+            pass.draw(3, 2);
             pass.end();
 
             const commandBuffer = encoder.finish();
