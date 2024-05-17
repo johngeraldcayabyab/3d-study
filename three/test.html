@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TEst</title>
+    <style>
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+<script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js"
+    }
+  }
+
+
+
+</script>
+<script type="module">
+    import * as THREE from 'three';
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+    const renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    const geometry = new THREE.BoxGeometry(1, 1, 1);
+    const material = new THREE.MeshBasicMaterial({color: 0x00ff00});
+    const cube = new THREE.Mesh(geometry, material);
+    scene.add(cube);
+
+    camera.position.z = 10;
+
+    const positions = ['x', 'y', 'z'];
+
+    function animate() {
+        requestAnimationFrame(animate);
+        cube.rotation.x += 0.01;
+        cube.rotation.y += 0.01;
+
+
+        // Generate Perlin noise values for smooth movement
+        const noiseX = perlinNoise(cube.position.x * 0.1, 0); // Adjust parameters as needed
+        const noiseY = perlinNoise(0, cube.position.y * 0.1); // Adjust parameters as needed
+
+        // Update cube position based on Perlin noise
+        cube.position.x += noiseX;
+        cube.position.y += noiseY;
+
+        renderer.render(scene, camera);
+    }
+
+    animate();
+
+
+    function perlinNoise(x, y) {
+        // Generate some pseudo-random values (you can replace this with a better random function)
+        const random = (x, y) => Math.sin(x * 12.9898 + y * 78.233) * 43758.5453;
+
+        // Calculate integer grid coordinates
+        const X = Math.floor(x) & 255;
+        const Y = Math.floor(y) & 255;
+
+        // Fractional part of coordinates
+        const xf = x - Math.floor(x);
+        const yf = y - Math.floor(y);
+
+        // Fade curves
+        const fade = t => t * t * t * (t * (t * 6 - 15) + 10);
+        const u = fade(xf);
+        const v = fade(yf);
+
+        // Hash coordinates of the 4 corners
+        const hash = (a, b) => random(a, b) & 255;
+        const aa = hash(X, Y);
+        const ab = hash(X + 1, Y);
+        const ba = hash(X, Y + 1);
+        const bb = hash(X + 1, Y + 1);
+
+        // Perlin noise components
+        const x1 = lerp(grad(hash(aa, ab), xf, yf), grad(hash(ba, bb), xf - 1, yf), u);
+        const x2 = lerp(grad(hash(aa, ab), xf, yf - 1), grad(hash(ba, bb), xf - 1, yf - 1), u);
+
+        return lerp(x1, x2, v);
+    }
+
+    // Function to linearly interpolate between a and b
+    function lerp(a, b, x) {
+        return a + x * (b - a)
+    }
+
+    // Function to calculate gradient
+    function grad(hash, x, y) {
+        switch (hash & 7) {
+            case 0:
+                return x + y;
+            case 1:
+                return -x + y;
+            case 2:
+                return x - y;
+            case 3:
+                return -x - y;
+            case 4:
+                return x + y;
+            case 5:
+                return -x + y;
+            case 6:
+                return x - y;
+            case 7:
+                return -x - y;
+        }
+    };
+</script>
+</body>
+</html>
